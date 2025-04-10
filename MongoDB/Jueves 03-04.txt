@@ -1,0 +1,85 @@
+SINTAXIS DE FIND()
+db.collection.find({query},{projection})
+
+---------------------------------------------------
+db.productos.find({},{_id:0, nombre:1,marca:1})	=> que no aparezca ID, solo nombre y marca
+
+======================================================================
+OPERADORES LÓGICOS => AND / OR
+
+AND	=> combinación de filtros cumplirse
+OR	=> Permite filtrar por uno u otra condición
+
+Example: AND
+db.productos.find({precio:{$gt:25, $lt:50}}) 	=> AND IMPLICITO
+
+db.productos.find({$and:[{precio:{$gt:25}},{precio:{$lt:50}}]}) => AND DE MANERA EXPLICITA
+db.productos.find({$and:[{precio:{$gt:10}},{precio:{$lt:30}}]})
+db.productos.find({$and:[{marca: "Marca B"},{precio:{$lt:50}}]},{_id:0})
+db.productos.find({$and:[{marca:"Marca X"},{precio:{$gt:89}}]},{_id:0})
+
+
+Example: OR
+
+db.productos.find({$or:[{precio:{$gt:25}},{precio:{$lt:50}}]},{_id:0})
+db.productos.find({$or:[{marca:"Marca X"},{precio:{$gt:89}}]},{_id:0})
+
+======================================================================
+db.productos.count()				=> Depreciado
+db.productos.find({marca:"Marca B"}).count()	=> Funciona, pero depreciado
+db.productos.countDocuments()			=> Vigente
+db.productos.countDocuments({marca:"Marca B"})	=> Vigente con filtro
+
+======================================================================
+Valores Únicos que se han registrado en mi collections => Distinct
+db.productos.distinct("marca")
+======================================================================
+ORDENAMIENTO POR CAMPOS EN PARTICULAR
+db.productos.find({},{_id:0, nombre:1,marca:1,precio:1}).sort({precio:1}) => Ordenamiento ASC [1]
+db.productos.find({},{_id:0, nombre:1,marca:1,precio:1}).sort({precio:-1}) => Ordenamiento DESC[-1]
+
+======================================================================
+OBTENER LOS N PRIMEROS REGISTROS - SQL = TOP
+db.productos.find({},{_id:0, nombre:1,marca:1}).limit(4)
+
+
+db.productos.find({},{_id:0, nombre:1,marca:1}).sort({precio:-1}).limit(2)	=> combinación de .sort y limit
+
+======================================================================	
+SALTARSE LOS N PRIMEROS REGISTROS
+db.productos.find({},{_id:0, nombre:1,marca:1})
+db.productos.find({},{_id:0, nombre:1,marca:1}).skip(3)
+
+
+======================================================================	
+SUBDOCUMENTO	=>  tener algo muy parecido a esto, pero incrustado dentro de otro
+
+{"nombre": "alumno 1", 
+"nivel":"nivel A",
+edad=14,
+materias:["mate1","art","ciencia"],
+notas:
+    { 
+   	mate1: 20,
+	mate1: 20,
+	mate1: 20
+    }
+}
+
+======================================================================
+db.estudiantes.find({"notas.mat":18},{_id:0})		=> para filtar algo dentro de un subdocumento
+db.estudiantes.find({"notas.mat":{$gte:15}},{_id:0})	=> mayor o igual a 15
+
+db.estudiantes.find({"notas.mat":{$gte:15}},{_id:0,"notas.mat":1})	=> solo filtrar las notas de mat
+db.estudiantes.find({},{_id:0,nombre:1,"notas.mat":1}).sort({"notas.mat":1})		=> ASC
+db.estudiantes.find({},{_id:0,nombre:1,"notas.mat":1}).sort({"notas.mat":-1})		=> DESC
+
+db.estudiantes.find({},{_id:0,nombre:1,"notas.mat":1,"notas.ing":1,"notas.cie":1,"notas.art":1}) => Mostrar cosas especificas		
+db.estudiantes.find({},{_id:0,nombre:1,"notas":1}) => mostar todo	
+
+
+
+
+
+
+

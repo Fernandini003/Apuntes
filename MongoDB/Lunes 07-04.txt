@@ -1,0 +1,111 @@
+CRUD
+---------------------------------------------------------
++ updateOne 
++ updateMany
++ replaceOne
+---------------------------------------------------------
+updateOne({query},{update})
+updateOne({query},{update})
+
+=========================================================
+BUSQUEDA POR ID
+db.productos.find({nombre:"Articulo 16"}) 			=> búsquedas personalizadas
+db.alummnos.find({_id:1})					=> para Id personalizado
+db.productos.find({_id:'67eb3fb06dffc4142ab71242'})		=> Incorrecto
+db.productos.find({_id:"67eb3fb06dffc4142ab71242"})		=> Incorrecto
+db.productos.find({_id:ObjectId("67eb3fb06dffc4142ab71242")})	=> Correcto (Usar ObjectId)
+
+
+=========================================================
+Para modificar datos:
+
+db.productos.updateOne(
+    {_id:ObjectId("67eb3fb06dffc4142ab71242")},
+    {$set:{precio:100.80}}
+)
+---------------------------------------------------------
+para modificar más de un dato:
+
+db.productos.updateOne(
+    {_id:ObjectId("67eb3fb06dffc4142ab71242")},
+    {$set:{nombre:"Articulo 27", marca:"Marca w"}}
+)
+=========================================================
+set	=> si el campo existe dentro del documento lo actualiza sino lo crea (no crea en el mismo orden)
+
+unset 	=> elimina un campo de los documentos
+no interesa el  valor que se este pasando, porque el objetivo es eliminar
+=========================================================
+
+-------------------LECTURA DE CONSOLA--------------------
+{
+  acknowledged: true,	=> comando ok
+  insertedId: null,	=> id 1,2,3 
+  matchedCount: 1,	=> documentos coinciden con el query
+  modifiedCount: 1,	=> documentos modificados
+  upsertedCount: 0	=> inserciones
+}
+---------------------------------------------------------
+
+============FORMA DE ACTUALIZAR NUMEROS AGG UNA CANTIDAD===================
+=>Si quiero sumar
+
+db.productos.updateMany(
+    {marca:"Marca A"},
+    {$inc:{precio:5}}
+)
+
+=>Si quiero restar [mul]
+db.productos.updateMany(
+{marca:"Marca A"},
+{$inc:{precio:-2}}
+)
+
+=>Si quiero multiplicar [mul]
+db.productos.updateMany(
+{marca:"Marca A"},
+{$mul:{precio:100}}
+)
+
+============AGREGAR UN ESPACIO NUEVO A TODA UNA MARCA EN ESPECIFICO===================
+
+db.productos.updateMany(
+{marca:"Marca B"},
+{$set:{colores:["verde","amarillo","rojo","azul"]}}
+)
+
+
+============AGREGAR UN ESPACIO NUEVO A TODA UNA MARCA EN ESPECIFICO===================
+push	=> agregamos un elemento mas a una lista que ya tenemos
+db.productos.updateOne(
+{marca:"Marca B"},
+{$push:{colores:"morado"}}
+)
+
+pull 	=> quita elemento
+
+db.productos.updateOne(
+{marca:"Marca B"},
+{$pull:{colores:"morado"}}
+)
+
+
+HOMEWORK=================================================================
+
+Como puedo hacer para agregar varios elementos a un campo arreglo elementos
+Como puedo hacer para quitar varios elementos a un campo arreglo elementos
+switch
+
+=========================================================================
+reemplazar un documento por otro
+
+db.productos.replaceOne(
+    {_id:ObjectId("67eb3fb06dffc4142ab71242")},
+    {descripcion:"Articulo 99"}
+)
+
+
+
+
+
+

@@ -1,0 +1,45 @@
+========================COMANDOS MONGODB========================
+
+cd (url bin)	= pego  dirección del bin
+dir *		= reviso el contenido 
+			Revisar si el mongosh esta en la carpeta, luego iniciar.
+mongosh 	= conectar a base de datos (tiene que estar en ejecución)
+show dbs 	= ayuda a visualizar las bases de datos que están creadas
+db		= saber que base de datos estoy usando
+use (name db) 	= cambiar de base de datos, además de eso te permite trabajar en ella.
+show collections= revisar las colecciones
+
+db.getcollectionsName()					=  revisar las colecciones
+db.							= para hacer llamado algo para ejecutar los comandos propios del motor
+db.createCollection("namecollection")			= crear una colección
+db.nametomove.renameCollection("nametocollection") 	= cambiar nombre de la colección
+db.collectiontodelete.drop() 				= borrar colección
+db.namecollection.insert({"nombre" : "hola"}) 		= esta es una manera antigua
+db.namecollection.insert({ _id:1, "nombre" : "prod1"})  = agregar id
+db.namecollection.find()    				= revisar contenido de colección
+db.productos.insertOne({"nombre" : "producto 2"})	= [insertOne] Solo para insertar un solo documento
+db.productos.insertMany(
+[{"descripcion" : "producto 4"},
+ {"descripcion" : "producto 5"},
+ {"descripción" : "producto 6"}
+])							= [insertMany] permite insertar documentos de uno en adelante 
+
+========================ESTRUCTURA DE UN DOCUMENTO JSON========================
+{
+campo1: 1.500,	 	 		 => para valores numéricos
+campo2: "valor2",			 => con comillas para letras
+campo3: 1500.00	 			 => para decimales
+campo4: ["color1", "color2", "color3"]	 => colección de valores 
+}
+
+-cada campo es un documento
+=============================================
+
+-En mogodb no se manejas tablas sino colecciones.
+-(test) = nombre de la base de datos por default.
+-una base de datos no se llega a concretar sino se crea alguna colección
+-mongo es sensible en las minúsculas y mayúsculas
+-Cada vez que inserte se genera un numero aleatorio
+-_id = es un numero que nunca se va a repetir, almenos dentro  de la colección
+
+

@@ -1,0 +1,78 @@
+CODIGO PARA MONGO:
+
++ cls		= Limpiar la consola.
++ insert	= depreciado
++ insertOne	= [insertar un documento]
++ insertMany	= [insertar de uno a más]
+
+
+ _id	=> es un campo oculto y es un identificador de cada documento, el  valor de este campo no se puede repetir.
+
+============================================================================
+insertar fecha: 1
+db.productos.insertOne({descripción: "producto 09", "fecha_compra": Date()})
+
+insertar fecha: 2 = forma mucho mejor de almacenamiento
+db.productos.insertOne({descripción: "10","fecha_compra": new Date()})
+
+---------------------------------------------------------------------------
+y, ¿Qué pasa si yo quiero seleccionar una fecha en particular?
+db.productos.insertOne({descripción:"producto 11", "fecha_compra": new Date("2025-01-11")})
+db.productos.insertOne({descripción:"producto 12", "fecha_compra": new Date("2025-01-10T22:00:00")})
+
+(lo que guarda Mongo es latitud 0 Hora actual + 5, GMT-5)
+============================================================================
+
+COMANDO find()
+(es sensible a mayúsculas, minúsculas, espacios, etc)
+
+db.productos.find()
+db.productos.find({})
+db.productos.find({marca:"Marca A"})	= para filtrar
+db.productos.findOne({marca:"Marca A"})	= findOne() (Solamente te devuelve el primer documento de la lista)
+
+
+¿Cómo agrego otra condición de búsqueda?
+db.productos.find({marca:"Marca A", precio:45.99})
+(En ese caso se aplican ambos filtros, como el AND en SQL)
+
+
+¿Qué pasa si yo solo quiero que me muestre algunos campos y no todos?
+db.productos.find({marca:"Marca A"}, {marca:1})		= con ID
+db.productos.find({marca:"Marca A"}, {_id:0, marca:1}) 	= Sin ID
+(se agrega otra llave y ahi dentro va lo que queremos)
+============================================================================
+
+¿Cómo utilizo un OPERADOR DE BÚSQUEDA?
+db.productos.find({marca:{$eq: "Marca A"}})	=> $eq = igual
+db.productos.find({marca:{$ne: "Marca A"}})	=> $ne = diferente de
+
+db.productos.find({precio:{$gt:87}})		=> $gt = greater than
+db.productos.find({precio:{$lt:87}})		=> $lt = lower than
+
+db.productos.find({precio:{$gte:87}})		=> $gte = greater than equal
+db.productos.find({precio:{$lte:87}})		=> $lte = lower than equal
+
+db.productos.find({marca:{$in:["Marca X", "Marca D"]}})		=> $in  = lista valores
+db.productos.find({marca:{$nin:["Marca X", "Marca D"]}})	=> $nin = no lista valores
+
+db.productos.find({precio:{$gt: 15, $lt:60}})			=> podemos usarlo como between de sql
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
