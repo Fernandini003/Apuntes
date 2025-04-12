@@ -1,0 +1,34 @@
+-----------------INSERTAR DATOS-----------------
+--insertOne
+db.productos.insertOne({nombre:"Articulo 109", marca:"Marca B", precio:4000})
+--insertMany
+db.productos.insertMany(
+[
+	{nombre:"Articulo 110", marca: "Marca C", precio:5000},
+	{nombre:"Articulo 111", marca: "Marca A", precio:4500},
+	{nombre:"Articulo 112", marca: "Marca D", precio:1000},
+	{nombre:"Articulo 113", marca: "Marca A", precio:1400},
+	{nombre:"Articulo 114", marca: "Marca C", precio:1000}
+])
+
+-----------------CONSULTAR DATOS-----------------
+db.productos.find() --Obtener todos los documentos
+db.productos.find({precio:{$lt:2000}},{_id:0}) --Con filtro (precio < 2000)
+db.productos.find({},{nombre:1,precio:1,_id:0})--Con proyección (solo muestra 'nombre' y 'precio')
+
+-----------------ACTUALIZAR DATOS-----------------
+db.productos.updateOne(
+{nombre:"Producto 102"},
+{$set:{nobmre:"Articulo 102"}}
+)
+
+-----------------ELIMINARdb DATOS-----------------
+
+db.productos.deleteOne({descripcion:"Articulo 99"})
+db.productos.deleteMany({precio:{$lt:2000}})
+
+
+
+-----------------------------
+db.productos.find({},{_id:0})
+-----------------------------

@@ -1,0 +1,73 @@
+------------
+db.animales.find({},{_id:0})
+-----------------------
+
+-----------------------OPERADORES DE COMPARACIÓN-----------------------
+
+db.animales.find({edad:{$eq:7}},{_id:0})	-- $eq => IGUAL
+db.animales.find({edad:{$ne:7}},{_id:0}) 	-- $ne => NO IGUAL
+db.animales.find({edad:{$gt:20}},{_id:0}) 	-- $gt => MAYOR QUE
+db.animales.find({edad:{$gte:15}},{_id:0})	-- $gt => MAYOR O IGUAL QUE
+db.animales.find({edad:{$lt:2}},{_id:0}) 	-- $lt => MENOR QUE 
+db.animales.find({edad:{$lte:2}},{_id:0}) 	-- $lt => MENOR O QUE
+db.animales.find({edad:{$in:[15,2]}},{_id:0})	-- $lt => EN UN ARRAY DE VALORES
+db.animales.find({edad:{$nin:[2,5]}},{_id:0})	-- $lt => NO EN UN ARRAY DE VALORES
+db.animales.find({"caracteristicas.alimentacion":{$in:["Herbívoro"]}},{_id:0})	--Buscar dentor de un subconjunto	
+
+
+-----------------------OPERADORES LÓGICOS-----------------------
+-- $and => TODAS LAS CONDICIONES SON TRUE
+db.animales.find(
+	{$and:[
+		{edad:{$gt:5}},
+		{edad:{$lt:10}}
+		]},
+	{_id:0}
+) 
+
+db.animales.find(
+	{$and:[
+		{edad: 10},
+		{habitat:"Océano"}
+	]}
+)
+
+-- $or  => ALMENOS UNA CONDICIÓN ES TRUE
+db.animales.find(
+	{$or:[
+		{edad: 10},
+		{habitat:"Selva"}
+	]},
+	{_id:0}
+)
+
+db.animales.find(
+{$or:[
+	{nombre:{$regex:/^M/}},
+	{edad:10}
+]},
+	{_id:0}
+)
+
+-- $not => INVIERTE LA CONDICIÓN
+db.animales.find(
+	{edad:{$not:{$lt:10}}
+	},
+	{_id:0}
+)
+
+-- $nor => NINGUNA CONDICIÓN ES VERDADERA
+db.animales.find(
+	{$nor:[
+		{edad: 10},
+		{habitat:"Selva"}
+	]},
+	{_id:0}
+)
+
+ -----------------------OPERADORES PARA ARRAYS-----------------------
+
+
+ -----------------------OPERADORES DE EVALUACIÓN-----------------------
+db.animales.find({nombre:{$regex:/^M/}},{_id:0})	-- Nombres que empiezan con "A"
+

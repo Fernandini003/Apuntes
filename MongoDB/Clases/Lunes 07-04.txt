@@ -105,6 +105,20 @@ db.productos.replaceOne(
 )
 
 
+--Actualizaciones
++	updateOne
++	updateMany
++ 	replaceOne
+
+--Eliminaciones 
++	deleteOne
++	deleteMany
+
+db.productos.find({marca:"Marca B"},{_id:0})		=> busca todas las "Marca B"
+db.productos.deleteMany({marca:"Marca B"},{_id:0})	=> Elimina todas las "Marca B"
+
+db.productos.countDocuments({marca:"Marca B"},{_id:0})	=> Cuenta la cantidad de Documentos que hay
+
 
 
 
