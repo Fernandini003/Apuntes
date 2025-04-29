@@ -1,0 +1,208 @@
+db.productos.distinct("marca")
+db.productos.find({"marca":{$ne:"Marca x"} })
+db.productos.find({"marca":{$ne:"Marca X"}},{_id:0, marca:1})
+=============================================================
+
+-------------------------------------------------------------
+db.productos.aggregate(
+	{$project:{_id:0, marca:1, categoria:1,
+			  nueva_categoria:{$ifNull:["$categoria","NA"]}
+			  }
+	}
+)
+-------------------------------------------------------------
+db.productos.updateMany({},{$set:{campo_nulo:null}}) 
+db.productos.find({},{_id:0, marca:1, categoria:1, campo_nulo:1}) 
+-------------------------------------------------------------
+db.productos.aggregate(
+	{$project:{_id:0, marca:1, categoria:1,campo_nulo:1,
+			  nueva_categoria:{$ifNull:["$categoria","$campo_nulo","Ambos Nulos"]}
+			  }
+	}
+)
+--SINTAXIS DE PROJECT-----------------------------------------------------------
+db.productos.aggregate({$project: {especificaciones del $Project}})
+
+
+
+--SINTAXIS DE MATCH-----------------------------------------------------------
+db.productos.aggregate({$match: {especificaciones del $match}})
+-------------------------------------------------------------
+
+db.productos.aggregate({$match:{marca:"Marca A"}})
+db.productos.aggregate({$match:{precio:{$gt:45}}})
+-------------------------------------------------------------
+--Usando ambos
+db.productos.aggregate(
+[
+	{$project: {especificaciones del $Project}}, --muestrame, deja de mostrar o construyeneme ciertos campos.
+	{$match: {especificaciones del $match}} --cuales son los que quiero filtrar
+]
+
+--REVISAR-----------------------------------------------------------
+db.productos.aggregate(
+	[
+		{$match:{
+			marca:{$in:["Marca A","Marca C"]},
+			precio:{$gt:15}
+			}
+		},
+		{$project:{_id:0, nombre:1, marca:1, precio:1, 
+					nuevo_precio:{$multiply:["$precio",1.5]}
+					}			
+		}
+	]
+)
+--------------------------------------------------
+db.productos.aggregate(
+	[
+		{$match:{
+			marca:{$in:["Marca A","Marca C"]},
+			precio:{$gt:15}
+			}
+		},
+		{$project:{_id:0, nombre:1, marca:1, precio:1
+					}			
+		}
+	]
+)
+
+--SINTAXIS DE MATCH-----------------------------------------------------------
+db.productos.aggregate({$group: {especificaciones del $group}})
+-------------------------------------------------------------
+db.productos.aggregate(
+	{$group:{_id:"$marca"}}
+)
+
+--Contar cuantos documentos tengo por grupo------------------------------------
+db.productos.aggregate(
+	{$group:{_id:"$marca", contador:{$sum:1}}}
+)
+
+--Contar cuantos documentos tengo por grupo - directo---------------------------
+db.productos.aggregate(
+	{$group:{_id:"$marca", contador:{$count:{}}}}
+)
+
+--Contar cuantos documentos tengo por grupo - directo-vertical---------------------------
+db.productos.aggregate(
+	{$group:{_id:"$marca",
+			 pro_precio:{$avg:"$precio"},
+			 max_precio:{$max:"$precio"},
+			 min_precio:{$min:"$precio"}
+			 }
+	}
+)
+-------------------------------------------------------------
+db.productos.aggregate(
+	{$group:{_id:{}, contador:{$sum:1},
+	prom_precio:{$avg:"$precio"}
+	}}
+)
+
+-------------------------------------------------------------
+db.productos.aggregate(
+	{$group:{_id:"$marca, $categoria",
+	contador:{$sum:1},
+	prom_precio:{$avg:"$precio"}
+	}}
+)
+
+--Forma correcta de agrupar por mas de dos campos---------------
+db.productos.aggregate(
+	{$group:{_id:{"campo1":"$marca","campo1":"$categoria"},
+	contador:{$sum:1},
+	prom_precio:{$avg:"$precio"}
+	}}
+)
+
+
+--Combinación------------------------------
+db.productos.aggregate(
+	[
+		{$match : {"marca":{$in: ["Marca A","Marca C","Marca D"]}}},
+		{$project:{_id:0, nombre:1,precio:1,stock:1,marca:1,
+					monto:{$add:["$precio","$stock"]}
+					}
+		},
+		{$group:{_id:"$marca", suma_monto:{$sum:"$monto"}}}
+	]
+)
+
+--mejorada ------------------------------
+
+db.productos.aggregate(
+	[
+		{$match : {"marca":{$in: ["Marca A","Marca C","Marca D"]}}},
+		{$project:{marca:1,
+					monto:{$add:["$precio","$stock"]}
+					}
+		},
+		{$group:{_id:"$marca", suma_monto:{$sum:"$monto"}}}
+	]
+)
+
+--SINTAXIS DE SORT-----------------------------------------------------------
+db.productos.aggregate({$sort: {especificaciones del $sort}})
+-------------------------------------------------------------
+
+db.productos.aggregate({$sort:{precio:1}})
+-------------------------------------------------------------
+db.productos.aggregate(
+	[
+		{$match : {"marca":{$in: ["Marca A","Marca C","Marca D"]}}},
+		{$project:{marca:1,
+					monto:{$add:["$precio","$stock"]}
+					}
+		},
+		{$group:{_id:"$marca", suma_monto:{$sum:"$monto"}}},
+		{$sort:{marca:1}}
+	]
+)
+
+--ordenamiento de manera ascendente-----------------------------------------------------------
+db.productos.aggregate(
+	[
+		{$match : {"marca":{$in: ["Marca A","Marca C","Marca D"]}}},
+		{$project:{marca:1,
+					monto:{$add:["$precio","$stock"]}
+					}
+		},
+		{$group:{_id:"$marca", suma_monto:{$sum:"$monto"}}},
+		{$sort:{suma_monto:1}}
+	]
+)
+
+
+--ordenamiento de manera descendente-----------------------------------------------------------
+db.productos.aggregate(
+	[
+		{$match : {"marca":{$in: ["Marca A","Marca C","Marca D"]}}},
+		{$project:{marca:1,
+					monto:{$add:["$precio","$stock"]}
+					}
+		},
+		{$group:{_id:"$marca", suma_monto:{$sum:"$monto"}}},
+		{$sort:{suma_monto:-1}}
+	]
+)
+
+
+--ASC----------------------------------------------------------
+db.productos.aggregate(
+	[
+		{$match:{marca:"Marca A"}},
+		{$project:{_id:0, nombre:1,precio:1}},
+		{$sort:{precio:1}}
+	]
+)
+
+--DESC----------------------------------------------------------
+
+db.productos.aggregate(
+	[
+		{$match:{marca:"Marca A"}},
+		{$project:{_id:0, nombre:1,precio:1}},
+		{$sort:{precio:-1}}
+	]
+)

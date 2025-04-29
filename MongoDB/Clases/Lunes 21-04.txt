@@ -1,0 +1,136 @@
+
+pipelines:$project, $match, $group, $sort
+-------------------------------------------------------
+--cuando se quiera trabajar con más de un pipeline
+
+db.coleción.aggregate(
+	[
+		{$pipeline:{especificaciones del pipeline}},
+		{$pipeline:{especificaciones del pipeline}},
+		{$pipeline:{especificaciones del pipeline}},
+		{$pipeline:{especificaciones del pipeline}}
+	]
+)
+
+
+-------------------------------------------------------
+--$sample	
+	devuelve cierta cantidad de elementos que determine con el size
+db.productos.aggregate(
+	{$sample:{size:1}}
+)
+
+--Error: 
+db.productos.aggregate(
+	[
+		{$match:{marca:"Marca A"}},
+		{$project:{nombre:1, marca:1}},
+		{$sample:{size:3}}
+	]
+)
+
+
+--Ejecuta bien:
+db.productos.aggregate([
+  { $match: { marca: "Marca A" } },
+  { $project: { nombre: 1, marca1: "$marca" } },
+  { $sample: { size: 3 } }
+])
+
+-------------------------------------------------------
+--$out	
+	crea una coleccion con los datos que se crean 
+db.productos.aggregate([
+  { $match: { marca: "Marca A" } },
+  { $project: { nombre: 1, marca1: "$marca",precio:1} },
+  { $out: "productos_marca_A" }
+])
+
+db.productos_marca_A.find()
+
+
+------------------------------------------------------
+db.productos.aggregate([
+		{$match : {"marca":{$in: ["Marca A","Marca C","Marca D"]}}},
+		{$project:{marca:1,
+					monto:{$multiply:["$precio","$stock"]}
+					}
+		},
+		{$group:{_id:"$marca", suma_monto:{$sum:"$monto"}}},
+		{$sort:{suma_monto:1}},
+		{$out: "productos_resume_monto"}
+])
+
+db.productos_resume_monto.find()
+
+-------------------------------------------------------
+$limit
+muestra algunos documentos
+
+db.productos.aggregate([
+	{$match:{marca:"Marca A"}},
+	{$project:{_id:0, nombre:1, Marca:1,precio:1}},
+	{$sort:{precio:-1}},
+	{$limit:3}
+])
+-------------------------------------------------------
+$skip
+muestra desde un punto que quieras hacia adelante
+
+db.productos.aggregate([
+	{$match:{marca:"Marca A"}},
+	{$project:{_id:0, nombre:1, Marca:1,precio:1}},
+	{$sort:{precio:-1}},
+	{$skip:2}
+])
+-------------------------------------------------------
+
+db.productos.aggregate ([
+	{$match:{marca:"Marca A"}},
+	{$project:{_id:0, nombre:1,marca:1,precio:1}},
+	{$sort:{precio :-1} },
+	{$limit:3}
+])
+
+-------------------------------------------------------
+$set
+updateOne
+updateMany
+			--> si existe campo, actualizar valor
+			--> si campo no existe, te crea al campo con el valor indicado
+
+cuando se ejecuta del aggregate: solamente funciona de manera temporal durante la ejecución del comando
+
+
+db.productos.find({marca:"Marca C"},{_id:0, nombre:1, Marca:1,precio:1})
+
+
+db.productos.aggregate([
+	{$match:{marca:"Marca C"}},
+	{$set:{precio_actual:{$multiply:["$precio",1.5]}}}
+])
+
+db.productos.find({nombre:"Articulo 24"})
+
+
+-------------------------------------------------------
+$merge
+esto para que quede de manera permanente
+db.productos.aggregate([
+	{$match:{marca:"Marca C"}},
+	{$set:{precio_actual:{$multiply:["$precio",1.5]}}},
+	{$merge:"productos"}
+])
+
+
+db.productos.find({nombre:"Articulo 24"})
+
+
+-------------------------------------------------------
+=> error  
+db.productos.aggregate([
+	{$match:{nombre:"Articulo 24"}},
+	{$unset:"precio_actual"},
+	{$merge:"productos"}
+])
+-------------------------------------------------------
